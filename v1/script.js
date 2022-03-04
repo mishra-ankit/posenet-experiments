@@ -22,7 +22,7 @@ var delayCreateScene = function () {
 
     // Attach the camera to the canvas
     camera.attachControl(canvas, true);
-    camera.inputs.addMouseWheel();
+    // camera.inputs.addMouseWheel();
 
     const light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
