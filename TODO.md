@@ -1,9 +1,7 @@
 Target game - https://youtu.be/LOrFy2LKHws?t=188
 
-- synamic Scaling
+- cylinder heights, position
 - Profit!!!!
-
-- Dynamic offset fix
 - Noise reduction
 
 https://storage.googleapis.com/tfjs-models/demos/pose-detection/index.html?model=blazepose
