@@ -17,12 +17,15 @@ var delayCreateScene = function () {
     const scene = new BABYLON.Scene(engine);
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), new BABYLON.OimoJSPlugin());
 
-    var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 8, -40), scene);
-    camera.setTarget(BABYLON.Vector3.Zero());
-
+    // var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 8, -40), scene);
+    // camera.setTarget(BABYLON.Vector3.Zero());
     // Attach the camera to the canvas
-    camera.attachControl(canvas, true);
+    // camera.attachControl(canvas, true);
     // camera.inputs.addMouseWheel();
+
+    const camera = new BABYLON.ArcRotateCamera("camera", 1.5, 1, 10, BABYLON.Vector3.Zero(), scene);
+    camera.setTarget(new BABYLON.Vector3(0, 4, 0));
+    camera.attachControl(canvas, true);
 
     const light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
@@ -58,6 +61,36 @@ var delayCreateScene = function () {
     ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, scene);
     const cylinders = [];
 
+    const modelScale = 4;
+    const playerZPosition = -groundDimensions.width / 2 + (roomZOffset * 2);
+    let modelEyeWidth, modelLeftEyePosition;
+    let modelOrigilaPos = {};
+
+    BABYLON.SceneLoader.ImportMesh(null, "", "dummy3.babylon", scene, function (meshes, particleSystems, skeletons) {
+        var mesh = meshes[0];
+        window.skeleton = skeletons[0];
+        window.mesh = mesh;
+        console.log(skeleton.bones.map(i => i.name));
+        scene.stopAllAnimations();
+
+        // move model on z axis
+        mesh.position.z = playerZPosition;
+
+        meshes.forEach(m => {
+            mesh.scaling = new BABYLON.Vector3(modelScale, modelScale, modelScale);
+        });
+
+        modelLeftEyePosition = getBoneByName(skeleton.bones, 'mixamorig:LeftEye').getAbsolutePosition();
+        modelEyeWidth = Math.abs(modelLeftEyePosition.x - getBoneByName(skeleton.bones, 'mixamorig:RightEye').getAbsolutePosition().x);
+
+        Object.values(mixamoToTFPairIndexMap).forEach(i => {
+            const bonePos = getBoneByName(skeleton.bones, `mixamorig:${i.name}`).getAbsolutePosition();
+            modelOrigilaPos[i.name] = bonePos;
+        });
+
+        console.log(modelOrigilaPos);
+    });
+
     scene.beforeRender = async function () {
         if (isReady()) {
             if (!game.isOver()) {
@@ -67,20 +100,18 @@ var delayCreateScene = function () {
             }
 
             const posArr = await getBonesPosition();
-            const nosePos = posArr[0];
-            const offsetY = noseTarget + Math.abs(nosePos.y * tfConversionScale);
-            const offsetX = nosePos.x * tfConversionScale;
+            const tfNosePos = posArr[0];
+            const tfLeftEyePos = posArr[1];
+
+            const tfEyeWitdh = Math.abs(posArr[1].x - posArr[2].x);            
+            const tfConversionScale = modelScale * modelEyeWidth / tfEyeWitdh;
+
+            const offsetY = (modelLeftEyePosition.y * modelScale) + Math.abs(tfLeftEyePos.y * tfConversionScale);
+            const offsetX = (tfNosePos.x * tfConversionScale) - 0.5;
 
             adjacentPairs.map((pair, index) => {
                 const p1 = posArr[pair[0]];
                 const p2 = posArr[pair[1]];
-
-
-                // find center of the two points
-                const center = {
-                    x: (p1.x + p2.x) / 2,
-                    y: (p1.y + p2.y) / 2
-                };
 
                 // find angle between the two points
                 const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
@@ -88,9 +119,18 @@ var delayCreateScene = function () {
                 // find distance between the two points
                 const height = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)) * tfConversionScale;
 
-                const playerZPosition = -groundDimensions.width / 2 + (roomZOffset * 2);
+                const { x, y } = getTransformedPos(p1, p2, tfConversionScale, offsetX, offsetY);
 
-                const { x, y } = getTransformedPos(center, tfConversionScale, offsetX, offsetY);
+                const boneInfo = mixamoToTFPairIndexMap[index];
+
+                if (boneInfo) {
+                    const bone = getBoneByName(skeleton.bones, `mixamorig:${boneInfo.name}`);
+                    // console.log(modelOrigilaPos[boneInfo.name].z + playerZPosition);
+                    // bone.setAbsolutePosition(new BABYLON.Vector3(x, y, modelOrigilaPos[boneInfo.name].z + playerZPosition), mesh);
+                    const adjustedAngle = angle + (boneInfo?.offsetAngle ?? 0);
+                    bone.setRotation(new BABYLON.Vector3(0, 0, adjustedAngle), BABYLON.Space.WORLD, mesh);
+                }
+
                 cylinders[index]?.dispose();
                 if (confidenceThreshold < p1.score && confidenceThreshold < p2.score) {
                     cylinders[index] = createCylinder(height, scene, index);
@@ -180,7 +220,7 @@ function createCylinder(height, scene, name) {
     }, scene);
 
     const material = new BABYLON.StandardMaterial(scene);
-    material.alpha = 0.7;
+    material.alpha = 0.1;
     material.diffuseColor = new BABYLON.Color3(1.0, 0.2, 0.7);
     cylinder.material = material;
 
@@ -322,5 +362,5 @@ function updateScore(score, miss) {
 }
 
 function showOver() {
-    document.getElementById("over").classList.remove("hidden");
+    // document.getElementById("over").classList.remove("hidden");
 }

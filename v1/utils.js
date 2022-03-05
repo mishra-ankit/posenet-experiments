@@ -1,4 +1,6 @@
-function getTransformedPos(pos, tfConversionScale, offsetX, offsetY) {
+function getTransformedPos(p1, p2, tfConversionScale, offsetX, offsetY) {
+    // find center of the two points
+    const pos = p1;
     const scaledX = pos.x * tfConversionScale;
     const scaledY = pos.y * tfConversionScale;
     const transformedX = -scaledX + offsetX;
@@ -21,4 +23,9 @@ function renderToCanvas(ctx, keypoints, width, height) {
 // get random in range
 function getRandomInRange(min, max) {
     return Math.random() * (max - min) + min;
+}
+
+
+function getBoneByName(bones, name) {
+    return bones.find(bone => bone.name === name);
 }

@@ -1,6 +1,4 @@
 const confidenceThreshold = 0.4;
-const tfConversionScale = 1 / 50;
-const noseTarget = 6.7;
 const tfPartsMap = {
     "nose": 0,
     "left_eye": 1,

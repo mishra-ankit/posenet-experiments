@@ -9,7 +9,15 @@ const tfVideo = document.getElementById('tfVideo');
 const tfCanvas = document.getElementById('skeletonCanvas');
 const ctx = tfCanvas.getContext('2d');
 
+const mixamoToTFPairIndexMap = {
+    7: {name: "RightArm", offsetAngle: Math.PI},
+    5: {name: "LeftArm"},
+    9: {name: "LeftForeArm"},
+    10: {name: "RightForeArm", offsetAngle: Math.PI},
+}
+
 const adjacentPairs = poseDetection.util.getAdjacentPairs(whichNet);//.slice(9, 10);
+console.log(adjacentPairs);
 
 tfVideo.addEventListener('loadeddata', () => {
     isTFReady = true;
