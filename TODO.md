@@ -7,7 +7,9 @@ Target game - https://youtu.be/LOrFy2LKHws?t=188
 - Noise reduction
 
 https://storage.googleapis.com/tfjs-models/demos/pose-detection/index.html?model=blazepose
-https://github.com/tensorflow/tfjs-models/tree/master/pose-detection
+
+Points wala Ladka - https://github.com/tensorflow/tfjs-models/tree/master/pose-detection
+
 https://github.com/tensorflow/tfjs-models/tree/master/pose-detection/src/posenet
 https://blog.tensorflow.org/2021/05/next-generation-pose-detection-with-movenet-and-tensorflowjs.html
 

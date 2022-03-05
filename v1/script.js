@@ -17,15 +17,15 @@ var delayCreateScene = function () {
     const scene = new BABYLON.Scene(engine);
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), new BABYLON.OimoJSPlugin());
 
-    // var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 8, -40), scene);
-    // camera.setTarget(BABYLON.Vector3.Zero());
+    var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 8, -40), scene);
+    camera.setTarget(BABYLON.Vector3.Zero());
     // Attach the camera to the canvas
-    // camera.attachControl(canvas, true);
+    camera.attachControl(canvas, true);
     // camera.inputs.addMouseWheel();
 
-    const camera = new BABYLON.ArcRotateCamera("camera", 1.5, 1, 10, BABYLON.Vector3.Zero(), scene);
-    camera.setTarget(new BABYLON.Vector3(0, 4, 0));
-    camera.attachControl(canvas, true);
+    // const camera = new BABYLON.ArcRotateCamera("camera", 1.5, 1, 10, BABYLON.Vector3.Zero(), scene);
+    // camera.setTarget(new BABYLON.Vector3(0, 4, 0));
+    // camera.attachControl(canvas, true);
 
     const light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
@@ -61,13 +61,13 @@ var delayCreateScene = function () {
     ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, scene);
     const cylinders = [];
 
-    const modelScale = 4;
+    const modelScale = 5;
     const playerZPosition = -groundDimensions.width / 2 + (roomZOffset * 2);
-    let modelEyeWidth, modelLeftEyePosition;
-    let modelOrigilaPos = {};
+    let modelMesh;
 
     BABYLON.SceneLoader.ImportMesh(null, "", "dummy3.babylon", scene, function (meshes, particleSystems, skeletons) {
-        var mesh = meshes[0];
+        mesh = meshes[0]
+        modelMesh = mesh[0];
         window.skeleton = skeletons[0];
         window.mesh = mesh;
         console.log(skeleton.bones.map(i => i.name));
@@ -79,16 +79,6 @@ var delayCreateScene = function () {
         meshes.forEach(m => {
             mesh.scaling = new BABYLON.Vector3(modelScale, modelScale, modelScale);
         });
-
-        modelLeftEyePosition = getBoneByName(skeleton.bones, 'mixamorig:LeftEye').getAbsolutePosition();
-        modelEyeWidth = Math.abs(modelLeftEyePosition.x - getBoneByName(skeleton.bones, 'mixamorig:RightEye').getAbsolutePosition().x);
-
-        Object.values(mixamoToTFPairIndexMap).forEach(i => {
-            const bonePos = getBoneByName(skeleton.bones, `mixamorig:${i.name}`).getAbsolutePosition();
-            modelOrigilaPos[i.name] = bonePos;
-        });
-
-        console.log(modelOrigilaPos);
     });
 
     scene.beforeRender = async function () {
@@ -100,55 +90,43 @@ var delayCreateScene = function () {
             }
 
             const posArr = await getBonesPosition();
-            const tfNosePos = posArr[0];
-            const tfLeftEyePos = posArr[1];
-
-            const tfEyeWitdh = Math.abs(posArr[1].x - posArr[2].x);            
-            const tfConversionScale = modelScale * modelEyeWidth / tfEyeWitdh;
-
-            const offsetY = (modelLeftEyePosition.y * modelScale) + Math.abs(tfLeftEyePos.y * tfConversionScale);
-            const offsetX = (tfNosePos.x * tfConversionScale) - 0.5;
-
             adjacentPairs.map((pair, index) => {
                 const p1 = posArr[pair[0]];
                 const p2 = posArr[pair[1]];
 
                 // find angle between the two points
                 const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-
-                // find distance between the two points
-                const height = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)) * tfConversionScale;
-
-                const { x, y } = getTransformedPos(p1, p2, tfConversionScale, offsetX, offsetY);
-
                 const boneInfo = mixamoToTFPairIndexMap[index];
 
                 if (boneInfo) {
                     const bone = getBoneByName(skeleton.bones, `mixamorig:${boneInfo.name}`);
-                    // console.log(modelOrigilaPos[boneInfo.name].z + playerZPosition);
-                    // bone.setAbsolutePosition(new BABYLON.Vector3(x, y, modelOrigilaPos[boneInfo.name].z + playerZPosition), mesh);
                     const adjustedAngle = angle + (boneInfo?.offsetAngle ?? 0);
-                    bone.setRotation(new BABYLON.Vector3(0, 0, adjustedAngle), BABYLON.Space.WORLD, mesh);
-                }
 
-                cylinders[index]?.dispose();
-                if (confidenceThreshold < p1.score && confidenceThreshold < p2.score) {
-                    cylinders[index] = createCylinder(height, scene, index);
-                    cylinder = cylinders[index];
-                    cylinder.setAbsolutePosition(x, y, playerZPosition);
-                    cylinder.rotation.z = angle + Math.PI / 2;
-                    cylinder.physicsImpostor = new BABYLON.PhysicsImpostor(cylinder, BABYLON.PhysicsImpostor.CylinderImpostor, { mass: 0, restitution: 1 }, scene);
+                    cylinders[index]?.dispose();
 
-                    game.balls.forEach(ball => {
-                        const rawBall = ball.getRawBall();
-                        cylinder.physicsImpostor.registerOnPhysicsCollide(rawBall.physicsImpostor, (main, collided) => {
-                            rawBall.material.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
-                            if (!ball.isBallTouched) {
-                                game.incrementScore();
-                                ball.isBallTouched = true;
-                            }
-                        });
-                    })
+                    if (confidenceThreshold < p1.score && confidenceThreshold < p2.score) {
+                        bone.setRotation(new BABYLON.Vector3(0, 0, adjustedAngle), BABYLON.Space.WORLD, mesh);
+
+                        const height = 1.5;
+                        cylinders[index] = createCylinder(height, scene, index);
+                        cylinder = cylinders[index];
+                        const bonePos = bone.getAbsolutePosition();
+                        cylinder.setAbsolutePosition(bonePos.x * modelScale, bonePos.y * modelScale, bonePos.z * modelScale + playerZPosition);
+                        cylinder.rotation.z = adjustedAngle + Math.PI / 2;
+                        cylinder.physicsImpostor = new BABYLON.PhysicsImpostor(cylinder, BABYLON.PhysicsImpostor.CylinderImpostor, { mass: 0, restitution: 1 }, scene);
+                        game.balls.forEach(ball => {
+                            const rawBall = ball.getRawBall();
+                            cylinder.physicsImpostor.registerOnPhysicsCollide(rawBall.physicsImpostor, (main, collided) => {
+                                rawBall.material.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+                                if (!ball.isBallTouched) {
+                                    game.incrementScore();
+                                    ball.isBallTouched = true;
+                                }
+                            });
+                        })
+                    } else {
+                        bone.setRotation(new BABYLON.Vector3(0, 0, 0), BABYLON.Space.WORLD, mesh);
+                    }
                 }
             });
         }
@@ -220,7 +198,7 @@ function createCylinder(height, scene, name) {
     }, scene);
 
     const material = new BABYLON.StandardMaterial(scene);
-    material.alpha = 0.1;
+    material.alpha = 0.7;
     material.diffuseColor = new BABYLON.Color3(1.0, 0.2, 0.7);
     cylinder.material = material;
 

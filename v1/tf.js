@@ -14,6 +14,9 @@ const mixamoToTFPairIndexMap = {
     5: {name: "LeftArm"},
     9: {name: "LeftForeArm"},
     10: {name: "RightForeArm", offsetAngle: Math.PI},
+    13: {name: "RightUpLeg", offsetAngle: -Math.PI/2},
+    12: {name: "LeftUpLeg", offsetAngle: -Math.PI/2},
+    0: {name: 'Head', offsetAngle: Math.PI/2 - Math.PI/3.5},
 }
 
 const adjacentPairs = poseDetection.util.getAdjacentPairs(whichNet);//.slice(9, 10);
