@@ -69,7 +69,7 @@ function init() {
     //
 
     skeleton = new THREE.SkeletonHelper(model);
-    skeleton.visible = false;
+    skeleton.visible = true;
     scene.add(skeleton);
 
     //
@@ -92,6 +92,8 @@ function init() {
     activateAllActions();
 
     animate();
+
+    deactivateAllActions();
 
   });
 

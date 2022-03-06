@@ -25,3 +25,8 @@ https://codepen.io/mediapipe/pen/bGweWyR
 https://playground.babylonjs.com/#3I55DK#0
 
 https://www.babylonjs-playground.com/#JTFJX3#1
+
+
+https://discourse.threejs.org/t/how-can-the-bones-of-this-fbx-character-be-controlled-correctly/15308
+
+https://discourse.threejs.org/t/need-help-figuring-out-bone-rotations-please-help/29059/15
