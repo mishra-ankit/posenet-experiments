@@ -340,5 +340,5 @@ function updateScore(score, miss) {
 }
 
 function showOver() {
-    // document.getElementById("over").classList.remove("hidden");
+    document.getElementById("over").classList.remove("hidden");
 }

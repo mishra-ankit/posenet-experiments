@@ -1,6 +1,7 @@
 Target game - https://youtu.be/LOrFy2LKHws?t=188
 
 - cylinder heights, position
+- body transparency
 - Profit!!!!
 - Noise reduction
 
