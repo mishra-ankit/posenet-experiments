@@ -29,3 +29,10 @@ function getRandomInRange(min, max) {
 function getBoneByName(bones, name) {
     return bones.find(bone => bone.name === name);
 }
+
+function getRandomBallVelocity() {
+    const y = getRandomInRange(5, 10);
+    const z = getRandomInRange(30, 40);
+    const velocity = new BABYLON.Vector3(0, y, -z);
+    return velocity;
+}

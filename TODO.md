@@ -1,7 +1,11 @@
 Target game - https://youtu.be/LOrFy2LKHws?t=188
 
-- cylinder heights, position
 - body transparency
+- cylinder heights, position
+- sounds - background, game over, hit, miss
+- celebration effect
+- start using hands ??
+- pictures taken during ??
 - Profit!!!!
 - Noise reduction
 
