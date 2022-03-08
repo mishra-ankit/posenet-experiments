@@ -6,6 +6,7 @@ const whichNet = poseDetection.SupportedModels.MoveNet;
 
 let isTFReady = false;
 const tfVideo = document.getElementById('tfVideo');
+const tfVideoUser = document.getElementById('tfVideoUser');
 const tfCanvas = document.getElementById('skeletonCanvas');
 const ctx = tfCanvas.getContext('2d');
 
@@ -30,6 +31,7 @@ if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ video: true })
         .then(function (stream) {
             tfVideo.srcObject = stream;
+            tfVideoUser.srcObject = stream;
         })
         .catch(function () {
             console.log("Something went wrong!");
