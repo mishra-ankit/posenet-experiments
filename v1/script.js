@@ -63,12 +63,13 @@ var delayCreateScene = function () {
     createWall(scene, { x: 0, y: roomHeight, z: roomZOffset, height: wallThickness, width: roomWidth, depth: roomLength }, groundDimensions);
     createWall(scene, { x: 0, y: 0, z: roomLength / 2 + roomZOffset, height: roomHeight, width: roomWidth, depth: wallThickness }, groundDimensions);
 
-    const game = new Game(scene);
+    const playerZPosition = -groundDimensions.width / 2 + (roomZOffset * 2) - 2;
+
+    const game = new Game(scene, playerZPosition);
 
     ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, scene);
     const cylinders = [];
 
-    const playerZPosition = -groundDimensions.width / 2 + (roomZOffset * 2) - 2;
 
     BABYLON.SceneLoader.ImportMesh(null, "", "dummy3.babylon", scene, function (meshes, particleSystems, skeletons) {
         mesh = meshes[0]
@@ -95,7 +96,7 @@ var delayCreateScene = function () {
     });
 
     scene.beforeRender = async function () {
-        console.log(engine.getFps().toFixed());
+        // console.log(engine.getFps().toFixed());
         if (isReady()) {
             if (!game.isOver()) {
                 game.update();
@@ -103,7 +104,7 @@ var delayCreateScene = function () {
                 game.end();
             }
 
-            const posArr = await getBonesPosition();
+            const posArr = await game.getBonesPosition();
             adjacentPairs.map((pair, index) => {
                 const p1 = posArr[pair[0]];
                 const p2 = posArr[pair[1]];
@@ -117,7 +118,7 @@ var delayCreateScene = function () {
                     const defaultHeight = 1.5;
                     const boneHeight = boneInfo.height ?? defaultHeight;
                     const adjustedAngle = angle + (boneInfo?.offsetAngle ?? 0);
-                    const sign = boneInfo.name.toLowerCase().startsWith('right') ? 1 : -1;
+                    const sign = boneInfo.sign ?? (boneInfo.name.toLowerCase().startsWith('right') ? 1 : -1);
                     // get x component of verctor from angle
                     const xAdjust = sign *  Math.cos(adjustedAngle) * (boneHeight/2);
                     // get y component of vector from angle

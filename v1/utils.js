@@ -28,10 +28,12 @@ function getBoneByName(bones, name) {
     return bones.find(bone => bone.name === name);
 }
 
-function getRandomBallVelocity() {
-    const speed = 1.2;
-    const y = getRandomInRange(5, 10) * speed;
-    const z = getRandomInRange(40, 50) * speed;
-    const velocity = new BABYLON.Vector3(0, y, -z);
-    return velocity;
+// detect div hover orver another div
+function isHovering(div1, div2) {
+    const div1Rect = div1.getBoundingClientRect();
+    const div2Rect = div2.getBoundingClientRect();
+    return !(div1Rect.bottom < div2Rect.top ||
+        div1Rect.top > div2Rect.bottom ||
+        div1Rect.right < div2Rect.left ||
+        div1Rect.left > div2Rect.right);
 }

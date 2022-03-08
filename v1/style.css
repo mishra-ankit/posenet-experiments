@@ -1,0 +1,88 @@
+html, body {
+    font-family: 'Sansita Swashed', cursive;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#renderCanvas {
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+}
+
+#skeletonCanvas {
+    position: absolute;
+    top: 0;
+    width: 200px;
+    height: 200px;
+    background: white;
+    z-index: 1000 !important;
+}
+
+#score {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+    font-size: 4em;
+    padding: 13px;
+}
+
+#over {
+
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    text-align: center;
+    color: white;
+    font-size: 4em;
+    padding: 13px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 100%;
+}
+
+.hidden {
+    display: none;
+}
+
+#tfVideoUser {
+    transform: scale(0.2);
+    transform-origin: bottom left;
+    position: absolute;
+    background: white;
+    z-index: 1000 !important;
+    left: 0;
+    bottom: 0;
+}
+
+#startBtn {
+    /* position: absolute; */
+    margin-left: 30%;
+}
+
+#hand {
+    z-index: 1001;
+    position: absolute;
+    top: 0;
+}
+
+button {
+    padding: 10px 30px;
+    background: black;
+    color: white;
+    border: 1px solid white;
+    border-radius: 10%;
+    font-size: 0.8em;
+    cursor: pointer;
+}
+
+button:hover {
+    background: white;
+    color: black;
+}

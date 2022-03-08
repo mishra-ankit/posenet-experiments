@@ -7,25 +7,48 @@ class Game {
     _miss = 0;
     _isRunning = false;
     btnStart = document.getElementById('startBtn');
+    handImg = document.getElementById('hand');
+    soundBg;
+    soundMiss
+    soundHit
+    soundOver
 
     get isRunning() {
         return this._isRunning;
     }
+
     set isRunning(value) {
         this._isRunning = value;
     }
-    // start funtion
-    
-    start() {
-        showHideToggle(false, 'start');
-        this.isRunning = true;
-    }
 
-    constructor(scene) {
+    constructor(scene, playerPositionZ) {
         this._scene = scene;
+        
+        Ball.PLAYER_POSITION_Z = playerPositionZ;
+
         this.btnStart.addEventListener('click', () => {
             this.start();
         });
+
+        this.soundMiss = new BABYLON.Sound("miss", "./assets/error.mp3", scene);
+        this.soundHit = new BABYLON.Sound("hit", "./assets/ball_hit.mp3", scene);
+        this.soundOver = new BABYLON.Sound("over", "./assets/over.mp3", scene);
+        this.soundBg = new BABYLON.Sound("startSong", "./assets/bg2.mp3", scene, function () {
+        }, {
+            volume: 0.2,
+            loop: true,
+            autoplay: true
+        });
+    }
+
+    start() {
+        showHideToggle(false, 'start');
+        showHideToggle(false, 'hand');
+        this.isRunning = true;
+    }
+
+    getBonesPosition() {
+        return getBonesPosition();
     }
 
     get balls() {
@@ -39,12 +62,15 @@ class Game {
         this._passedTime++;
         if (this._passedTime % this._ballCreationInterval === 0) {
             this._passedTime = 0;
-            this._balls.push(new Ball(this._scene, (ball) => {
-                if (!ball.isBallTouched) {
-                    this.incrementMiss();
-                }
+            const handleBallDestroy = (ball) => {
                 this.cleanup();
-            }));
+            }
+
+            const handleMiss = () => {
+                this.soundMiss.play();
+                this.incrementMiss();
+            }
+            this._balls.push(new Ball(this._scene, handleBallDestroy, handleMiss));
         }
 
         this._balls.forEach(ball => {
@@ -61,6 +87,7 @@ class Game {
     }
 
     incrementScore() {
+        this.soundHit.play();
         this._score++;
         updateScore(this._score, this._miss);
     }
@@ -71,7 +98,11 @@ class Game {
     }
 
     end() {
-        this.isRunning = false;
-        showHideToggle(true, 'over');
+        if (this.isRunning) {
+            this.soundBg.stop();
+            this.soundOver.play();
+            this.isRunning = false;
+            showHideToggle(true, 'over');
+        }
     }
 }

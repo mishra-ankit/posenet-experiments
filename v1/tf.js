@@ -16,7 +16,7 @@ const mixamoToTFPairIndexMap = {
     10: {name: "RightForeArm", height: 2, offsetAngle: Math.PI, defaultAngel: - Math.PI / 2},
     13: {name: "RightUpLeg", height: 2, offsetAngle: -Math.PI/2},
     12: {name: "LeftUpLeg", height: 2, offsetAngle: -Math.PI/2},
-    0: {name: 'Head', height: 0.5, offsetAngle: Math.PI/2 - Math.PI/3.5, cylinderRotate: Math.PI/2},
+    0: {name: 'Head', height: 1, offsetAngle: Math.PI/2 - Math.PI/3.6, cylinderRotate: Math.PI/2, sign: 1},
 }
 
 const adjacentPairs = poseDetection.util.getAdjacentPairs(whichNet);//.slice(9, 10);
@@ -51,6 +51,6 @@ async function getBonesPosition() {
     const pos = await getPose();
     tfCanvas.width = tfVideo.clientWidth;
     tfCanvas.height = tfVideo.clientHeight;
-    renderToCanvas(ctx, pos.keypoints, tfVideo.clientWidth, tfVideo.clientHeight);
+    // renderToCanvas(ctx, pos.keypoints, tfVideo.clientWidth, tfVideo.clientHeight);
     return pos.keypoints;
 }
