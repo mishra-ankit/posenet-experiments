@@ -5,9 +5,27 @@ class Game {
     _score = 0;
     static get MaxMisses() { return 5 };
     _miss = 0;
+    _isRunning = false;
+    btnStart = document.getElementById('startBtn');
+
+    get isRunning() {
+        return this._isRunning;
+    }
+    set isRunning(value) {
+        this._isRunning = value;
+    }
+    // start funtion
+    
+    start() {
+        showHideToggle(false, 'start');
+        this.isRunning = true;
+    }
 
     constructor(scene) {
         this._scene = scene;
+        this.btnStart.addEventListener('click', () => {
+            this.start();
+        });
     }
 
     get balls() {
@@ -15,6 +33,9 @@ class Game {
     }
 
     update() {
+        if (!this.isRunning) {
+            return;
+        }
         this._passedTime++;
         if (this._passedTime % this._ballCreationInterval === 0) {
             this._passedTime = 0;
@@ -50,6 +71,7 @@ class Game {
     }
 
     end() {
-        showOver();
+        this.isRunning = false;
+        showHideToggle(true, 'over');
     }
 }

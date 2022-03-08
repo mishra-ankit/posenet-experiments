@@ -11,20 +11,24 @@ var startRenderLoop = function (engine, canvas) {
 var engine = null;
 var scene = null;
 var sceneToRender = null;
+const MODEL_SCALE = 8;
+
 var createDefaultEngine = function () { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true, disableWebGL2Support: false }); };
 var delayCreateScene = function () {
     const scene = new BABYLON.Scene(engine);
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), new BABYLON.OimoJSPlugin());
-
-    // var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 8, -40), scene);
-    // camera.setTarget(BABYLON.Vector3.Zero());
-    // Attach the camera to the canvas
-    // camera.attachControl(canvas, true);
-    // camera.inputs.addMouseWheel();
-
-    const camera = new BABYLON.ArcRotateCamera("camera", 1.5, 1, 10, BABYLON.Vector3.Zero(), scene);
-    camera.setTarget(new BABYLON.Vector3(0, 4, 0));
-    camera.attachControl(canvas, true);
+    const devMode = false;
+    if (devMode !== true) {
+        var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 8, -40), scene);
+        // camera.setTarget(BABYLON.Vector3.Zero());
+        // Attach the camera to the canvas
+        camera.attachControl(canvas, true);
+        camera.inputs.addMouseWheel();
+    } else {
+        var camera = new BABYLON.ArcRotateCamera("camera", 1.5, 1, 10, BABYLON.Vector3.Zero(), scene);
+        camera.setTarget(new BABYLON.Vector3(0, 4, 0));
+        camera.attachControl(canvas, true);
+    }
 
     const light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
@@ -42,11 +46,15 @@ var delayCreateScene = function () {
 
     // set ground color to green
     ground.material = new BABYLON.StandardMaterial("ground-material", scene);
-    ground.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+    // ground.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
 
-    const roomWidth = 15;
-    const roomZOffset = 5;
-    const roomHeight = 10;
+    // ground set material to wood floor texture
+    ground.material.diffuseTexture = new BABYLON.Texture("assets/tile.png", scene);
+    
+
+    const roomWidth = 2.5 * MODEL_SCALE + 2;
+    const roomZOffset = 5 ;
+    const roomHeight = 2 * MODEL_SCALE + 1;
     const roomLength = groundDimensions.width - roomZOffset * 2;
     const wallThickness = 0.1;
 
@@ -60,8 +68,7 @@ var delayCreateScene = function () {
     ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, scene);
     const cylinders = [];
 
-    const modelScale = 5;
-    const playerZPosition = -groundDimensions.width / 2 + (roomZOffset * 2);
+    const playerZPosition = -groundDimensions.width / 2 + (roomZOffset * 2) - 2;
 
     BABYLON.SceneLoader.ImportMesh(null, "", "dummy3.babylon", scene, function (meshes, particleSystems, skeletons) {
         mesh = meshes[0]
@@ -69,7 +76,7 @@ var delayCreateScene = function () {
         // add material to mesh
         var material_model = new BABYLON.StandardMaterial('model-material', scene);
         material_model.diffuseColor = BABYLON.Color3.White();
-        material_model.alpha = 0.7;
+        material_model.alpha = 0.8;
 
         // add material to model
         mesh.material = material_model;
@@ -83,11 +90,12 @@ var delayCreateScene = function () {
         mesh.position.z = playerZPosition;
 
         meshes.forEach(m => {
-            mesh.scaling = new BABYLON.Vector3(modelScale, modelScale, modelScale);
+            mesh.scaling = new BABYLON.Vector3(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
         });
     });
 
     scene.beforeRender = async function () {
+        console.log(engine.getFps().toFixed());
         if (isReady()) {
             if (!game.isOver()) {
                 game.update();
@@ -106,19 +114,22 @@ var delayCreateScene = function () {
 
                 if (boneInfo) {
                     const bone = getBoneByName(skeleton.bones, `mixamorig:${boneInfo.name}`);
+                    const defaultHeight = 1.5;
+                    const boneHeight = boneInfo.height ?? defaultHeight;
                     const adjustedAngle = angle + (boneInfo?.offsetAngle ?? 0);
-
+                    const sign = boneInfo.name.toLowerCase().startsWith('right') ? 1 : -1;
+                    // get x component of verctor from angle
+                    const xAdjust = sign *  Math.cos(adjustedAngle) * (boneHeight/2);
+                    // get y component of vector from angle
+                    const yAdjust = sign *  Math.sin(adjustedAngle) * (boneHeight/2);
                     cylinders[index]?.dispose();
-
                     if (confidenceThreshold < p1.score && confidenceThreshold < p2.score) {
                         bone.setRotation(new BABYLON.Vector3(0, 0, adjustedAngle), BABYLON.Space.WORLD, mesh);
-
-                        const height = 1.5;
-                        cylinders[index] = createCylinder(height, scene, index);
+                        cylinders[index] = createCylinder(boneHeight * MODEL_SCALE * 0.2, scene, index);
                         cylinder = cylinders[index];
                         const bonePos = bone.getAbsolutePosition();
-                        cylinder.setAbsolutePosition(bonePos.x * modelScale, bonePos.y * modelScale, bonePos.z * modelScale + playerZPosition);
-                        cylinder.rotation.z = adjustedAngle + Math.PI / 2;
+                        cylinder.setAbsolutePosition((bonePos.x * MODEL_SCALE) + xAdjust, (bonePos.y * MODEL_SCALE) + yAdjust , bonePos.z * MODEL_SCALE + playerZPosition);
+                        cylinder.rotation.z = adjustedAngle + Math.PI / 2 + (boneInfo.cylinderRotate ?? 0);
                         cylinder.physicsImpostor = new BABYLON.PhysicsImpostor(cylinder, BABYLON.PhysicsImpostor.CylinderImpostor, { mass: 0, restitution: 1 }, scene);
                         game.balls.forEach(ball => {
                             const rawBall = ball.getRawBall();
@@ -129,14 +140,21 @@ var delayCreateScene = function () {
                                     ball.isBallTouched = true;
                                 }
                             });
-                        })
+                        });
                     } else {
-                        bone.setRotation(new BABYLON.Vector3(0, 0, 0), BABYLON.Space.WORLD, mesh);
+                        // bone.setRotation(new BABYLON.Vector3(0, 0, boneInfo.defaultAngel ?? 0), BABYLON.Space.WORLD, mesh);
                     }
                 }
             });
         }
     }
+
+    // show fps on screen
+    scene.onBeforeRenderObservable.add(function () {
+        if (scene.debugLayer.isVisible()) {
+            scene.debugLayer.hide();
+        }
+    });
 
     return scene;
 };
@@ -197,11 +215,9 @@ function createCylinder(height, scene, name) {
     }, scene);
 
     const material = new BABYLON.StandardMaterial(scene);
-    material.alpha = 0.7;
+    material.alpha = 1;
     material.diffuseColor = new BABYLON.Color3(1.0, 0.2, 0.7);
     cylinder.material = material;
 
     return cylinder;
 }
-
-

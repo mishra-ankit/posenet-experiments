@@ -8,6 +8,8 @@ Target game - https://youtu.be/LOrFy2LKHws?t=188
 - pictures taken during ??
 - Profit!!!!
 - Noise reduction
+- bend
+- Move right/left a little
 
 https://storage.googleapis.com/tfjs-models/demos/pose-detection/index.html?model=blazepose
 

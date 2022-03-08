@@ -63,6 +63,10 @@
             }
 
             #over {
+
+            }
+
+            .overlay {
                 position: absolute;
                 top: 0;
                 text-align: center;
@@ -77,33 +81,43 @@
             .hidden {
                 display: none;
             }
+
+            #tfVideo {
+                transform: scale(0.2);
+                transform-origin: bottom left;
+                position: absolute;
+                background: white;
+                z-index: 1000 !important;
+                left: 0;
+                bottom: 0;
+            }
+
+            #startBtn {
+                /* position: absolute; */
+                margin-left: 50%;
+            }
         </style>
     </head>
 <body>
     <canvas id="renderCanvas"></canvas>
-
     <canvas id="skeletonCanvas"></canvas>
     <section id="gui">
         <!-- score  -->
         <div id="score">
-                <snap id="score-text"></span>
+        <snap id="score-text"></span>
     </section>
-    <section id="over" class="hidden">
-            Game Over
-            <button onclick="location.reload();">Restart</button>
+    <section id="start" class="overlay">
+        <h1>Ready!</h1>
+        <button id="startBtn">Start</button>
+        <h6>Stand in the center of camera</h6>
+    </section>
+    <section id="over" class="overlay hidden">
+        <h1>Game Over</h1>
+        <button onclick="location.reload();">Try again</button>
     </section>
 
-    <video autoplay="true" id="tfVideo" style="
-    transform: scaleX(-1);
-    visibility: hidden;
-    /* width: auto;
-    height: auto; */
-    /* position: absolute; */
-    /* top: 0; */
-    /* right: 0; */
-    background: white;
-    z-index: 1000 !important;
-    ">
+    <video autoplay="true" id="tfVideo">
+    <!-- <video autoplay="true" id="tfVideoUser"></video> -->
     </video>
     <script src="constants.js"></script>
     <script src="utils.js"></script>

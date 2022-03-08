@@ -10,13 +10,13 @@ const tfCanvas = document.getElementById('skeletonCanvas');
 const ctx = tfCanvas.getContext('2d');
 
 const mixamoToTFPairIndexMap = {
-    7: {name: "RightArm", offsetAngle: Math.PI},
-    5: {name: "LeftArm"},
-    9: {name: "LeftForeArm"},
-    10: {name: "RightForeArm", offsetAngle: Math.PI},
-    13: {name: "RightUpLeg", offsetAngle: -Math.PI/2},
-    12: {name: "LeftUpLeg", offsetAngle: -Math.PI/2},
-    0: {name: 'Head', offsetAngle: Math.PI/2 - Math.PI/3.5},
+    7: {name: "RightArm", height: 2, offsetAngle: Math.PI, defaultAngel: 0},
+    5: {name: "LeftArm", height: 2, defaultAngel: 0},
+    9: {name: "LeftForeArm", height: 2, defaultAngel: Math.PI / 2},
+    10: {name: "RightForeArm", height: 2, offsetAngle: Math.PI, defaultAngel: - Math.PI / 2},
+    13: {name: "RightUpLeg", height: 2, offsetAngle: -Math.PI/2},
+    12: {name: "LeftUpLeg", height: 2, offsetAngle: -Math.PI/2},
+    0: {name: 'Head', height: 0.5, offsetAngle: Math.PI/2 - Math.PI/3.5, cylinderRotate: Math.PI/2},
 }
 
 const adjacentPairs = poseDetection.util.getAdjacentPairs(whichNet);//.slice(9, 10);
