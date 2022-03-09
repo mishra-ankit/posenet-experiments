@@ -118,6 +118,7 @@ var delayCreateScene = function () {
                     const defaultHeight = 1.5;
                     const boneHeight = boneInfo.height ?? defaultHeight;
                     const adjustedAngle = angle + (boneInfo?.offsetAngle ?? 0);
+
                     const sign = boneInfo.sign ?? (boneInfo.name.toLowerCase().startsWith('right') ? 1 : -1);
                     // get x component of verctor from angle
                     const xAdjust = sign *  Math.cos(adjustedAngle) * (boneHeight/2);
@@ -212,11 +213,11 @@ function createCylinder(height, scene, name) {
     // create cylinder
     const cylinder = BABYLON.MeshBuilder.CreateCylinder("cylinder-" + name, {
         height,
-        diameter: 0.5,
+        diameter: 0.8,
     }, scene);
 
     const material = new BABYLON.StandardMaterial(scene);
-    material.alpha = 1;
+    material.alpha = 0.1;
     material.diffuseColor = new BABYLON.Color3(1.0, 0.2, 0.7);
     cylinder.material = material;
 

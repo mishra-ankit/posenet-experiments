@@ -61,7 +61,7 @@ class Game {
             if (bones) {
                 const rHand = bones[10];
                 this.handImg.style.top = rHand.y + 'px';
-                this.handImg.style.left = (500 + rHand.x) + 'px';
+                this.handImg.style.left = (window.innerWidth - rHand.x - (window.innerWidth * 0.2)) + 'px';
 
                 if (isHovering(this.handImg, this.btnStart)) {
                     this.start();

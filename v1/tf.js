@@ -15,8 +15,8 @@ const mixamoToTFPairIndexMap = {
     5: {name: "LeftArm", height: 2, defaultAngel: 0},
     9: {name: "LeftForeArm", height: 2, defaultAngel: Math.PI / 2},
     10: {name: "RightForeArm", height: 2, offsetAngle: Math.PI, defaultAngel: - Math.PI / 2},
-    13: {name: "RightUpLeg", height: 2, offsetAngle: -Math.PI/2},
-    12: {name: "LeftUpLeg", height: 2, offsetAngle: -Math.PI/2},
+    13: {name: "RightUpLeg", height: 4, offsetAngle: -Math.PI/2, cylinderRotate: Math.PI / 2},
+    12: {name: "LeftUpLeg", height: 4, offsetAngle: -Math.PI/2, cylinderRotate: Math.PI / 2},
     0: {name: 'Head', height: 1, offsetAngle: Math.PI/2 - Math.PI/3.6, cylinderRotate: Math.PI/2, sign: 1},
 }
 
