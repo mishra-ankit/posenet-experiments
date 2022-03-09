@@ -52,18 +52,17 @@ html, body {
 }
 
 #tfVideoUser {
-    transform: scale(0.2);
-    transform-origin: bottom left;
+    transform: rotateY(180deg) scale(0.2);
+    transform-origin: bottom;
     position: absolute;
     background: white;
     z-index: 1000 !important;
-    left: 0;
     bottom: 0;
 }
 
 #startBtn {
     /* position: absolute; */
-    margin-left: 30%;
+    /* margin-left: 30%; */
 }
 
 #hand {

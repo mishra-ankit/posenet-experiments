@@ -23,7 +23,7 @@ class Game {
 
     constructor(scene, playerPositionZ) {
         this._scene = scene;
-        
+
         Ball.PLAYER_POSITION_Z = playerPositionZ;
 
         this.btnStart.addEventListener('click', () => {
@@ -55,8 +55,19 @@ class Game {
         return this._balls;
     }
 
-    update() {
+    async update() {
         if (!this.isRunning) {
+            const bones = await this.getBonesPosition();
+            if (bones) {
+                const rHand = bones[10];
+                this.handImg.style.top = rHand.y + 'px';
+                this.handImg.style.left = (500 + rHand.x) + 'px';
+
+                if (isHovering(this.handImg, this.btnStart)) {
+                    this.start();
+                }
+            }
+
             return;
         }
         this._passedTime++;
