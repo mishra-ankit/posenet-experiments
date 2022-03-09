@@ -217,7 +217,7 @@ function createCylinder(height, scene, name) {
     }, scene);
 
     const material = new BABYLON.StandardMaterial(scene);
-    material.alpha = 0.1;
+    material.alpha = 0;
     material.diffuseColor = new BABYLON.Color3(1.0, 0.2, 0.7);
     cylinder.material = material;
 
