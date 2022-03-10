@@ -46,3 +46,9 @@ https://codepen.io/mediapipe/full/LYRRYEw
 
 Mediapipe all demos -
 https://codepen.io/mediapipe
+
+
+https://threejs.org/docs/#api/en/core/Object3D.lookAt
+
+https://github.com/tensorflow/tfjs-models/tree/master/pose-detection
+https://github.com/tensorflow/tfjs-models/tree/master/pose-detection/src/blazepose_mediapipe
