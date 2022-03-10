@@ -34,3 +34,15 @@ https://www.babylonjs-playground.com/#JTFJX3#1
 
 https://discourse.threejs.org/t/how-can-the-bones-of-this-fbx-character-be-controlled-correctly/15308
 https://discourse.threejs.org/t/need-help-figuring-out-bone-rotations-please-help/29059/15
+
+https://rawgit.com/takahirox/three.js/GLTFMMD/examples/webgl_loader_gltf_miku_ik.html
+
+
+BlazePose Demo - 
+https://codepen.io/mediapipe/details/jOMbvxw
+
+Holistic - 
+https://codepen.io/mediapipe/full/LYRRYEw
+
+Mediapipe all demos -
+https://codepen.io/mediapipe
