@@ -11,28 +11,23 @@
 
 <body>
   <div class="container">
-    <canvas class="output_canvas" width="1280px" height="720px"></canvas>
-    <video class="input_video"></video>
-    <div class="landmark-grid-container"></div>
+    <canvas id="output_canvas" width="1280px" height="720px"></canvas>
+    <video id="input_video"></video>
   </div>
 
   <script type="module">
-    const videoElement = document.getElementsByClassName('input_video')[0];
-    const canvasElement = document.getElementsByClassName('output_canvas')[0];
+    const videoElement = document.getElementById('input_video');
+    const canvasElement = document.getElementById('output_canvas');
+
     const canvasCtx = canvasElement.getContext('2d');
-    const landmarkContainer = document.getElementsByClassName('landmark-grid-container')[0];
-    // const grid = new LandmarkGrid(landmarkContainer);
     
     function onResults(results) {
       if (!results.poseLandmarks) {
-        // grid.updateLandmarks([]);
         return;
       }
     
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    //   canvasCtx.drawImage(results.segmentationMask, 0, 0,
-    //                       canvasElement.width, canvasElement.height);
     
       // Only overwrite existing pixels.
       canvasCtx.globalCompositeOperation = 'source-in';
@@ -50,8 +45,6 @@
       drawLandmarks(canvasCtx, results.poseLandmarks,
                     {color: '#FF0000', lineWidth: 2});
       canvasCtx.restore();
-    
-    //   grid.updateLandmarks(results.poseWorldLandmarks);
     }
     
     const pose = new Pose({locateFile: (file) => {
