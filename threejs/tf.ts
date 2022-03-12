@@ -1,8 +1,11 @@
+// import {} from "@mediapipe/camera_utils";
+// import {} from "@mediapipe/control_utils";
+import {drawConnectors, drawLandmarks} from "@mediapipe/drawing_utils";
+import {POSE_CONNECTIONS, Pose} from "@mediapipe/pose";
+
 const videoElement = document.getElementById('input_video');
 const canvasElement = document.getElementById('output_canvas');
 const canvasCtx = canvasElement.getContext('2d');
-
-const pose = initPoseNet();
 
 function onResults(results) {
   if (!results.poseLandmarks) {
@@ -32,11 +35,12 @@ function onResults(results) {
   canvasCtx.restore();
 }
 
-function initPoseNet() {
+async function initPoseNet() {
   const pose = new Pose({
     locateFile: (file) => {
       return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
-    }
+    },
+
   });
   pose.setOptions({
     modelComplexity: 1,
@@ -47,13 +51,13 @@ function initPoseNet() {
     // minTrackingConfidence: 0.5
   });
   pose.onResults(onResults);
-  // pose.send({ image: videoElement }); // to initialize loading
-
+  await pose.initialize();
   return pose;
 }
 
 // get video file from user and extract frames from video
-function loadVideo() {
+function loadVideo(poseNet: Pose) {
+  poseNet.reset();
   const videoFile = document.getElementById('videoFile').files[0];
   const reader = new FileReader();
   reader.readAsDataURL(videoFile);
@@ -61,19 +65,27 @@ function loadVideo() {
     videoElement.src = reader.result;
 
     async function loop() {
-      await pose.send({ image: videoElement });
+      await poseNet.send({ image: videoElement });
       requestAnimationFrame(() => loop());
     }
 
-    loop(pose);
-
     // play video when ready
-    videoElement.oncanplay = () => {
-      videoElement.play();
-    };
+    videoElement.oncanplay = (async () => {
+      await videoElement.play();
+      loop();
+    });
   };
 }
 
-document.getElementById('videoFile').addEventListener('change', loadVideo);
+async function init() {
+  const poseNet = await initPoseNet();
+  console.log('PoseNet initialized');
+  // show loading message
+  document.getElementById('loading-indicator').style.display = 'none';
+  document.getElementById('content').style.display = '';
 
-// init();
+  document.getElementById('videoFile').addEventListener('change', loadVideo.bind(null, poseNet));
+}
+
+
+init();

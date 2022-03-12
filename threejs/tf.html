@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
-  <style>
-    /* video fix max height */
-    video {
-      max-height: 500px;
-    }
-  </style>
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <style>
+      /* video fix max height */
+      video,
+      canvas {
+        max-height: 400px;
+      }
+    </style>
+  </head>
 
-<body>
+  <body>
+    <!-- loading indicator -->
+    <div id="loading-indicator">
+      <div>Loading...</div>
+    </div>
     <!-- video file upload -->
-    <input type="file" id="videoFile" accept="video/*">
-    <canvas id="output_canvas" width="1280px" height="720px"></canvas>
-    <video id="input_video" loop></video>
+    <div id="content" style="display: none;">
+      <input type="file" id="videoFile" accept="video/*" />
+      <br />
+      <canvas id="output_canvas" width="1280px" height="720px"></canvas>
+      <video id="input_video" loop></video>
+    </div>
 
-  <script type="module" src="tf.js"></script>
-</body>
+    <script type="module" src="tf.ts"></script>
+  </body>
 </html>

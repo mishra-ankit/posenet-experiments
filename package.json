@@ -2,9 +2,9 @@
   "name": "posenet-experiments",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "parcel threejs/tf.html --open",
+    "build": "parcel build"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,15 @@
   "bugs": {
     "url": "https://github.com/mishra-ankit/posenet-experiments/issues"
   },
-  "homepage": "https://github.com/mishra-ankit/posenet-experiments#readme"
+  "homepage": "https://github.com/mishra-ankit/posenet-experiments#readme",
+  "devDependencies": {
+    "@mediapipe/camera_utils": "^0.3.1640029074",
+    "@mediapipe/control_utils": "^0.6.1629159505",
+    "@mediapipe/drawing_utils": "^0.3.1620248257",
+    "@mediapipe/pose": "^0.5.1635988162",
+    "@typescript-eslint/eslint-plugin": "^5.14.0",
+    "@typescript-eslint/parser": "^5.14.0",
+    "eslint": "^8.11.0",
+    "parcel": "^2.3.2"
+  }
 }
