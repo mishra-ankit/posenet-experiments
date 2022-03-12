@@ -52,3 +52,8 @@ https://threejs.org/docs/#api/en/core/Object3D.lookAt
 
 https://github.com/tensorflow/tfjs-models/tree/master/pose-detection
 https://github.com/tensorflow/tfjs-models/tree/master/pose-detection/src/blazepose_mediapipe
+
+
+https://threejs.org/docs/#api/en/objects/Bone
+
+https://stackoverflow.com/questions/27002809/calculating-matrix-for-bone-to-look-at-object-in-three-js
