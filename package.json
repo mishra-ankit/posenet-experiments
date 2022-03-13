@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "parcel threejs/tf.html --open",
-    "build": "parcel build"
+    "watch": "cross-env NODE_ENV=development parcel threejs/tf.html --no-hmr --open",
+    "watch3": "cross-env NODE_ENV=development parcel threejs/index.html --no-hmr --open"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,14 @@
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.14.0",
     "eslint": "^8.11.0",
-    "parcel": "^2.3.2"
+    "parcel": "^2.3.2",
+    "parcel-plugin-static-files-copy": "^2.5.1",
+    "@parcel/config-default": "^2.3.2",
+    "@parcel/transformer-raw": "^2.3.2"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "stats-js": "^1.0.1",
+    "three": "^0.138.3"
   }
 }
