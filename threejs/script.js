@@ -2,7 +2,6 @@ import Stats from 'https://unpkg.com/three@0.138.0/examples/jsm/libs/stats.modul
 import { GUI } from 'https://unpkg.com/three@0.138.0/examples/jsm/libs/lil-gui.module.min.js';
 import * as FBXLoader from "https://unpkg.com/three@0.138.0/examples/js/loaders/FBXLoader.js"
 
-window.rightArm;
 const clock = new THREE.Clock();
 const scene = new THREE.Scene()
 scene.add(new THREE.AxesHelper(5))
@@ -36,10 +35,24 @@ const fbxLoader = new THREE.FBXLoader()
 fbxLoader.load(
   'remy.fbx',
   (object) => {
-    window.rightArm = object.getObjectByName('mixamorigRightForeArm');
-
     object.scale.set(.01, .01, .01)
     scene.add(object)
+
+    // skeleton helper
+    const skeletonHelper = new THREE.SkeletonHelper(object);
+    skeletonHelper.material.linewidth = 3;
+    skeletonHelper.visible = true;
+    scene.add(skeletonHelper);
+
+    const bones = skeletonHelper.bones;
+    window.bones = bones;
+
+    const NECK_BONE_ROOT_NAME = 'Neck';
+    const commonBonePrefix = bones.filter(i => i.name.endsWith(NECK_BONE_ROOT_NAME))[0].name.replace(NECK_BONE_ROOT_NAME, '');
+    console.log({ commonBonePrefix });
+    
+
+    window.rightArm = object.getObjectByName('mixamorigRightForeArm');
   },
   (xhr) => {
     console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
