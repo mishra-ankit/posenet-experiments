@@ -46,32 +46,12 @@ const boneArr = [
   // { detectorBone: BONES.rightLeg, sign: 1, offset: -window.rad(90) },
   { detectorBone: BONES.rightUpLeg, sign: 1, offset: THREE.Math.degToRad(90) },
   { detectorBone: BONES.leftUpLeg, sign: 1, offset: THREE.Math.degToRad(90) },
+  { detectorBone: BONES.head, offset: THREE.Math.degToRad(180) },
 ];
-
-function boneLookAtLocal(bone: THREE.Bone, position: THREE.Vector3) {
-  bone.updateMatrixWorld();
-  const direction = position.clone().normalize();
-}
-
-function boneLookAtWorld(bone, v) {
-  const parent = bone.parent;
-  scene.attach(bone);
-  boneLookAtLocal(bone, v);
-  parent.attach(bone);
-}
 
 function handleResults(results: any) {
   if (!results.poseLandmarks) return;
   if (!window.getBone) return;
-  // console.log(results);
-
-  // const { x, y, z } = transform(
-  //   results.poseWorldLandmarks[Detector.POSE_LANDMARKS.RIGHT_ELBOW]
-  // );
-  // const bone = window.getBone('RightArm') as THREE.Bone;
-  // console.log(x,y,z);
-  // bone.lookAt(x * 10, y * 10, z * 10);
-  // boneLookAtWorld(bone, new THREE.Vector3(x, y, z));
 
   boneArr.forEach(({ detectorBone, sign, offset }) => {
     const [startIndex, endIndex] = BONE_MAPPING[detectorBone];
@@ -86,59 +66,16 @@ function handleResults(results: any) {
     const adjustedAngle = (sign ?? 1) * (angle1 + (offset ?? 0));
     const bone = window.getBone(detectorBone) as THREE.Bone;
 
-    // get Vector from 2 points
-    // const v1 = new THREE.Vector3(start.x, start.y, start.z);
-    // const v2 = new THREE.Vector3(end.x, end.y, end.z);
-    // const v = v2.clone().sub(v1) as THREE.Vector3;
-    // arrowHelper.setDirection(v);
-    // arrowHelper.setLength(20);
-
-    // boneLookAtWorld(bone, v);
-
-    // bone.rotation.z = adjustedAngle;
-    // console.log(angle2)
-    // change eular order
-    // THREE.Euler.DefaultOrder = 'XYZ';
-    // Math.PI + angle2
-    // bone.setRotationFromEuler(new THREE.Euler(0, 0, adjustedAngle));
-    // bone.rotation.set(0, 0, adjustedAngle);
-    // const position = new THREE.Vector3();
-    // const quaternion = new THREE.Quaternion();
-    // const scale = new THREE.Vector3();
-    // bone.rotateOnWorldAxis(new THREE.Vector3(0, 0, 0), adjustedAngle);
-    // bone.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), adjustedAngle);
-    // const m = bone.matrixWorld.extractRotation(bone.parent.matrixWorld);
-    // bone.setRotationFromMatrix(m);
-    // bone.matrixWorld.decompose( position, quaternion, scale );
-    // bone.lookAt(new THREE.Vector3(5, 5, 5));
     if (end.visibility > 0.5) {
       bone.rotation.z = adjustedAngle;
     } else {
       bone.rotation.z = 0;
     }
-    // bone.rotation.x = angle2;
-    // console.log(detectorBone, adjustedAngle);
-    // convert radians to degrees
   });
 
   results.poseWorldLandmarks.forEach((val, boneIndex) => {
     const sphere = spheres[boneIndex];
     const { x, y, z, visibility } = transform(val);
-    // draw a sphere at left elbow
-    // const scale = 1;
-    // const offset = 2;
-    // draw a sphere at the position of the left elbow
-    // const leftElbow = new THREE.Vector3(
-    //   ((x - 0.6) * scale),
-    //   ((1 - y) * scale) + offset,
-    //   (z * scale)
-    // );
-
-    // const pos = new THREE.Vector3(x, y * scale, z);
-
-    // console.log({ x, y, z });
-
-    // boneLookAtWorld(window.getBone('LeftForeArm'), leftElbow);
     if (visibility > 0.5) {
       sphere.position.set(x, y, z);
     } else {
@@ -235,11 +172,6 @@ fbxLoader.load(
     const allBoneNames = bones.map((i, index) =>
       i.name.replace(commonBonePrefix, '')
     );
-    // console.log({ commonBonePrefix, allBones });
-
-    // window.rightArm = window.getBone('RightForeArm');
-
-    // add GUI to control bone position
     createGUI(scene, allBoneNames);
   },
   (xhr) => {
@@ -257,9 +189,7 @@ function createGUI(scene, bonesNames) {
   bonesNames.forEach((entry, index) => {
     const i = entry;
     const folder = gui.addFolder(i + index);
-    // console.log(i);
     const bone = window.getBone(i) as THREE.Bone;
-    // console.log(bone);
     folder.add(bone.rotation, 'x', -Math.PI, Math.PI);
     folder.add(bone.rotation, 'y', -Math.PI, Math.PI);
     folder.add(bone.rotation, 'z', -Math.PI, Math.PI);

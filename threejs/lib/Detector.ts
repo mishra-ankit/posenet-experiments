@@ -21,6 +21,7 @@ export enum BONES {
   rightLeg = 'RightLeg',
   rightUpLeg = 'RightUpLeg',
   leftUpLeg = 'LeftUpLeg',
+  head = 'Head',
 }
 
 export const BONE_MAPPING = {
@@ -36,6 +37,7 @@ export const BONE_MAPPING = {
     POSE_LANDMARKS_RIGHT.RIGHT_KNEE,
   ],
   [BONES.leftUpLeg]: [POSE_LANDMARKS.LEFT_HIP, POSE_LANDMARKS_LEFT.LEFT_KNEE],
+  [BONES.head]: [POSE_LANDMARKS.LEFT_EYE, POSE_LANDMARKS.RIGHT_EYE],
 };
 
 // console.log(BONE_MAPPING);
