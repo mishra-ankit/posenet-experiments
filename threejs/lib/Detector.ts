@@ -8,6 +8,7 @@ import {
   Pose,
   POSE_CONNECTIONS,
   POSE_LANDMARKS,
+  POSE_LANDMARKS_LEFT,
   POSE_LANDMARKS_RIGHT,
   Results,
 } from '@mediapipe/pose';
@@ -19,6 +20,7 @@ export enum BONES {
   leftArm = 'LeftArm',
   rightLeg = 'RightLeg',
   rightUpLeg = 'RightUpLeg',
+  leftUpLeg = 'LeftUpLeg',
 }
 
 export const BONE_MAPPING = {
@@ -33,10 +35,7 @@ export const BONE_MAPPING = {
     POSE_LANDMARKS.RIGHT_HIP,
     POSE_LANDMARKS_RIGHT.RIGHT_KNEE,
   ],
-  [BONES.rightLeg]: [
-    POSE_LANDMARKS_RIGHT.RIGHT_KNEE,
-    POSE_LANDMARKS_RIGHT.RIGHT_ANKLE,
-  ],
+  [BONES.leftUpLeg]: [POSE_LANDMARKS.LEFT_HIP, POSE_LANDMARKS_LEFT.LEFT_KNEE],
 };
 
 // console.log(BONE_MAPPING);
@@ -111,7 +110,9 @@ export class Detector {
     pose.onResults((results) => {
       this.onResults(results);
       if (results.poseLandmarks) {
-        const poseTransformed = results.poseWorldLandmarks.map(i => transform(i));
+        const poseTransformed = results.poseWorldLandmarks.map((i) =>
+          transform(i)
+        );
         handleResults({ ...results, poseTransformed });
       }
     });

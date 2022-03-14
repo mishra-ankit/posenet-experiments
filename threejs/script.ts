@@ -44,7 +44,8 @@ const boneArr = [
   { detectorBone: BONES.leftArm, sign: 1 },
   { detectorBone: BONES.rightArm, sign: 1, offset: Math.PI },
   // { detectorBone: BONES.rightLeg, sign: 1, offset: -window.rad(90) },
-  // { detectorBone: BONES.rightUpLeg, sign: -1, offset: -window.rad(90) },
+  { detectorBone: BONES.rightUpLeg, sign: 1, offset: THREE.Math.degToRad(90) },
+  { detectorBone: BONES.leftUpLeg, sign: 1, offset: THREE.Math.degToRad(90) },
 ];
 
 function boneLookAtLocal(bone: THREE.Bone, position: THREE.Vector3) {
@@ -110,7 +111,11 @@ function handleResults(results: any) {
     // bone.setRotationFromMatrix(m);
     // bone.matrixWorld.decompose( position, quaternion, scale );
     // bone.lookAt(new THREE.Vector3(5, 5, 5));
-    bone.rotation.z = adjustedAngle;
+    if (end.visibility > 0.5) {
+      bone.rotation.z = adjustedAngle;
+    } else {
+      bone.rotation.z = 0;
+    }
     // bone.rotation.x = angle2;
     // console.log(detectorBone, adjustedAngle);
     // convert radians to degrees
