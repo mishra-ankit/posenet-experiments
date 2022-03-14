@@ -1,22 +1,33 @@
 <!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>CodePen - Three.js GLTF Loader</title>
-  <link rel="stylesheet" href="./style.css">
-
-</head>
-<body>
-
-  <div id="container"></div>
-  
-
-  <script src="https://unpkg.com/fflate"></script>
-<script src="https://unpkg.com/three@0.138.0/build/three.js"></script>
-<script src="https://unpkg.com/three@0.138.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="https://unpkg.com/three@0.138.0/examples/js/controls/OrbitControls.js"></script>
-<!-- partial -->
-  <script type="module" src="./script.js"></script>
-
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CodePen - Three.js GLTF Loader</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <style>
+    video, img {
+      position: absolute;
+      top: 0;
+      width: 200px;
+      height: 200px;
+      background: white;
+      z-index: 1000 !important;
+    }
+  </style>
+  <body>
+    <div id="container"></div>
+    <script>
+      var parcelRequire;
+    </script>
+    <script src="https://unpkg.com/fflate"></script>
+    <script type="module" src="./script.ts"></script>
+    <video
+      id="video"
+      autoplay
+      muted
+      loop
+    ></video>
+    <img style="display: none;" id="img" src="../videos/man.webp" />
+  </body>
 </html>

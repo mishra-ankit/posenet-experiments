@@ -1,5 +1,3 @@
-// import {} from "@mediapipe/camera_utils";
-// import {} from "@mediapipe/control_utils";
 import { Detector } from './lib/Detector';
 
 // get video file from user and extract frames from video
@@ -35,7 +33,8 @@ function loadVideo(detector: Detector) {
   };
 }
 
-async function init(detector: Detector) {
+async function init() {
+  const detector = new Detector();
   await detector.init();
   // show loading message
   document.getElementById('loading-indicator').style.display = 'none';
@@ -46,5 +45,4 @@ async function init(detector: Detector) {
     .addEventListener('change', loadVideo.bind(null, detector));
 }
 
-const detector = new Detector();
-init(detector);
+init();

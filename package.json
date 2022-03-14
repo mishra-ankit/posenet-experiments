@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "watch": "cross-env NODE_ENV=development parcel threejs/tf.html --no-hmr --open",
-    "watch3": "cross-env NODE_ENV=development parcel threejs/index.html --no-hmr --open"
+    "watch3": "cross-env NODE_ENV=development parcel threejs/index.html --open"
   },
   "repository": {
     "type": "git",
@@ -22,13 +22,15 @@
     "@mediapipe/control_utils": "^0.6.1629159505",
     "@mediapipe/drawing_utils": "^0.3.1620248257",
     "@mediapipe/pose": "^0.5.1635988162",
+    "@parcel/config-default": "^2.3.2",
+    "@parcel/transformer-raw": "^2.3.2",
+    "@types/dat.gui": "^0.7.7",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.14.0",
+    "dat.gui": "^0.7.9",
     "eslint": "^8.11.0",
     "parcel": "^2.3.2",
-    "parcel-plugin-static-files-copy": "^2.5.1",
-    "@parcel/config-default": "^2.3.2",
-    "@parcel/transformer-raw": "^2.3.2"
+    "parcel-plugin-static-files-copy": "^2.5.1"
   },
   "dependencies": {
     "cross-env": "^7.0.3",
