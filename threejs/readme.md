@@ -28,3 +28,7 @@ https://veeenu.github.io/blog/implementing-skeletal-animation/
 
 
 https://github.com/leapmotion/leapjs/blob/5a89a25b5fd627ec0febeb7e8db77c6ca30f612a/examples/threejs-bones.html
+
+
+IK Loaded -
+https://rawgit.com/takahirox/three.js/GLTFMMD/examples/webgl_loader_gltf_miku_ik.html

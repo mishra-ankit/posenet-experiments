@@ -25,6 +25,7 @@
     "@parcel/config-default": "^2.3.2",
     "@parcel/transformer-raw": "^2.3.2",
     "@types/dat.gui": "^0.7.7",
+    "@types/three": "^0.138.0",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
     "@typescript-eslint/parser": "^5.14.0",
     "dat.gui": "^0.7.9",

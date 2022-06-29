@@ -44,7 +44,7 @@ export const BONE_MAPPING = {
 
 export function transform(
   p: NormalizedLandmark,
-  scale = 3
+  scale = 5
 ): NormalizedLandmark {
   return {
     ...p,

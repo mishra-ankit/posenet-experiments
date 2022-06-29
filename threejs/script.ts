@@ -1,30 +1,22 @@
 // @ts-typechecked
-import { POSE_CONNECTIONS, Results } from '@mediapipe/pose';
+import { POSE_CONNECTIONS } from '@mediapipe/pose';
+import { GUI } from 'dat.gui';
 import Stats from 'stats-js';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
+import { handleResults } from './handleResult';
 import {
-  BONES,
-  BONE_MAPPING,
-  Detector,
-  getBoneAngle,
-  transform,
+  Detector
 } from './lib/Detector';
 
-import { GUI } from 'dat.gui';
 
 const scene = new THREE.Scene();
 const spheres = [];
 
+const arrows = [];
+
 // render the vector ith arrow helper
-const arrowHelper = new THREE.ArrowHelper(
-  new THREE.Vector3(),
-  new THREE.Vector3(),
-  0.1,
-  0x00ff00
-);
-scene.add(arrowHelper);
 
 for (let i = 0; i < POSE_CONNECTIONS.length; i++) {
   const sphereGeometry = new THREE.SphereGeometry(0.1, 32, 32);
@@ -32,68 +24,32 @@ for (let i = 0; i < POSE_CONNECTIONS.length; i++) {
   const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
   scene.add(sphere);
   spheres.push(sphere);
-}
 
-const boneArr = [
-  // {
-  //   detectorBone: BONES.rightForeArm,
-  //   sign: 1,
-  //   // offset: THREE.Math.degToRad(180),
-  // },
-  // { detectorBone: BONES.leftForeArm, sign: 1, offset: THREE.Math.degToRad(180) },
-  { detectorBone: BONES.leftArm, sign: 1 },
-  { detectorBone: BONES.rightArm, sign: 1, offset: Math.PI },
-  // { detectorBone: BONES.rightLeg, sign: 1, offset: -window.rad(90) },
-  { detectorBone: BONES.rightUpLeg, sign: 1, offset: THREE.Math.degToRad(90) },
-  { detectorBone: BONES.leftUpLeg, sign: 1, offset: THREE.Math.degToRad(90) },
-  { detectorBone: BONES.head, offset: THREE.Math.degToRad(180) },
-];
-
-function handleResults(results: any) {
-  if (!results.poseLandmarks) return;
-  if (!window.getBone) return;
-
-  boneArr.forEach(({ detectorBone, sign, offset }) => {
-    const [startIndex, endIndex] = BONE_MAPPING[detectorBone];
-    const [start, end] = [
-      results.poseWorldLandmarks[startIndex],
-      results.poseWorldLandmarks[endIndex],
-    ];
-    const { angle1, angle2 } = getBoneAngle(
-      detectorBone,
-      results.poseTransformed
-    );
-    const adjustedAngle = (sign ?? 1) * (angle1 + (offset ?? 0));
-    const bone = window.getBone(detectorBone) as THREE.Bone;
-
-    if (end.visibility > 0.5) {
-      bone.rotation.z = adjustedAngle;
-    } else {
-      bone.rotation.z = 0;
-    }
-  });
-
-  results.poseWorldLandmarks.forEach((val, boneIndex) => {
-    const sphere = spheres[boneIndex];
-    const { x, y, z, visibility } = transform(val);
-    if (visibility > 0.5) {
-      sphere.position.set(x, y, z);
-    } else {
-      sphere.position.set(0, 0, 0);
-    }
-  });
+  const arrowHelper = new THREE.ArrowHelper(
+    new THREE.Vector3(),
+    new THREE.Vector3(),
+    0.1,
+    0x00ff00
+  );
+  scene.add(arrowHelper);
+  arrows.push(arrowHelper);
 }
 
 async function initDetection() {
   const detector = new Detector();
-  await detector.init(handleResults);
+  await detector.init((r) => handleResults(r, window.getBone, spheres, scene));
   const videoElement = document.getElementById('video') as HTMLVideoElement;
+  const cameraInput = true;
 
-  cameraInputToVideo(videoElement);
+  if (cameraInput === true) {
+    cameraInputToVideo(videoElement);
 
-  videoElement.addEventListener('loadeddata', () => {
+    videoElement.addEventListener('loadeddata', () => {
+      loop();
+    });
+  } else {
     loop();
-  });
+  }
 
   async function loop() {
     await detector.send({ image: videoElement });
@@ -116,15 +72,14 @@ function cameraInputToVideo(video: HTMLVideoElement) {
 
 initDetection();
 
-scene.add(new THREE.AxesHelper(5));
-
+const stats = Stats();
+document.body.appendChild(stats.dom);
+scene.add(new THREE.AxesHelper(200));
 const light = new THREE.PointLight();
 light.position.set(0.8, 1.4, 1.0);
 scene.add(light);
-
 const ambientLight = new THREE.AmbientLight();
 scene.add(ambientLight);
-
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -136,17 +91,15 @@ camera.position.set(0, 2, -7);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.target.set(0, 1, 0);
-
 const fbxLoader = new FBXLoader();
 const remy = new URL('../models/remy.fbx', import.meta.url);
 fbxLoader.load(
   remy.href,
   (object) => {
-    const modelScale = 0.015;
+    const modelScale = 0.02;
     object.scale.set(modelScale, modelScale, modelScale);
     scene.add(object);
 
@@ -159,6 +112,13 @@ fbxLoader.load(
     const bones = skeletonHelper.bones;
     window.bones = bones;
 
+    // show all bone axis
+    for (let i = 0; i < bones.length; i++) {
+      const bone = bones[i];
+      const boneAxis = new THREE.AxesHelper(20);
+      bone.add(boneAxis);
+    }
+
     // show infinite grid
     const gridHelper = new THREE.GridHelper(50, 50);
     scene.add(gridHelper);
@@ -167,8 +127,8 @@ fbxLoader.load(
     const commonBonePrefix = bones
       .filter((i) => i.name.endsWith(NECK_BONE_ROOT_NAME))[0]
       .name.replace(NECK_BONE_ROOT_NAME, '');
-    window.getBone = (name): THREE.Bone =>
-      object.getObjectByName(`${commonBonePrefix}${name}`);
+    window.getBone = (name) =>
+      object.getObjectByName(`${commonBonePrefix}${name}`) as THREE.Bone;
     const allBoneNames = bones.map((i, index) =>
       i.name.replace(commonBonePrefix, '')
     );
@@ -193,6 +153,10 @@ function createGUI(scene, bonesNames) {
     folder.add(bone.rotation, 'x', -Math.PI, Math.PI);
     folder.add(bone.rotation, 'y', -Math.PI, Math.PI);
     folder.add(bone.rotation, 'z', -Math.PI, Math.PI);
+
+    folder.add(bone.position, 'x', -100, 100);
+    folder.add(bone.position, 'y', -100, 100);
+    folder.add(bone.position, 'z', -100, 100);
   });
 }
 
@@ -202,9 +166,6 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   render();
 }
-
-const stats = Stats();
-document.body.appendChild(stats.dom);
 
 function animate() {
   requestAnimationFrame(animate);
